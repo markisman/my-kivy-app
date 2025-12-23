@@ -1,14 +1,14 @@
 [app]
-title = CameraApp
-package.name = cameraapp
-package.domain = org.example
+title = CameraDepth
+package.name = cameradepth
+package.domain = org.test
 
 source.dir = .
-source.include_exts = py,kv,png,jpg
+source.include_exts = py,png,jpg,kv
 
 version = 0.1
 
-requirements = python3,kivy,opencv-python,numpy
+requirements = python3,kivy,opencv,numpy
 
 orientation = portrait
 fullscreen = 1
@@ -16,13 +16,11 @@ fullscreen = 1
 android.permissions = CAMERA
 android.api = 33
 android.minapi = 21
+android.ndk = 25b
 
-# خیلی مهم
-android.skip_update = True
-android.accept_sdk_license = True
+android.gradle_dependencies =
+android.enable_androidx = True
 
-# ANT رو کامل غیرفعال می‌کنیم
-android.ant_path =
-android.use_androidx = True
-
+[buildozer]
 log_level = 2
+warn_on_root = 0
