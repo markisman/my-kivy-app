@@ -2,11 +2,11 @@ name: Build APK
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04   # ❗ 24.04 دردسر داره
 
     steps:
     - name: Checkout
@@ -15,21 +15,19 @@ jobs:
     - name: Set up Java 17
       uses: actions/setup-java@v4
       with:
-        distribution: temurin
-        java-version: 17
+        distribution: 'temurin'
+        java-version: '17'
 
-    - name: Install system dependencies
+    - name: Install dependencies
       run: |
         sudo apt update
         sudo apt install -y \
-          python3-pip \
-          python3-setuptools \
-          python3-wheel \
+          python3 python3-pip \
           zip unzip \
-          git \
           libncurses6 \
           libstdc++6 \
-          zlib1g \
+          libffi-dev \
+          libssl-dev \
           openjdk-17-jdk
 
     - name: Install Buildozer
@@ -37,23 +35,18 @@ jobs:
         pip3 install --upgrade pip
         pip3 install buildozer cython
 
-    - name: Install Android SDK
+    - name: Setup Android SDK
       run: |
         mkdir -p $HOME/android-sdk/cmdline-tools
-        cd $HOME/android-sdk
-
+        cd $HOME/android-sdk/cmdline-tools
         wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-        unzip commandlinetools-linux-*_latest.zip
-
-        mkdir -p cmdline-tools/latest
-        mv cmdline-tools/* cmdline-tools/latest || true
+        unzip commandlinetools-linux-*.zip
+        mv cmdline-tools latest
 
         echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
-        echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+        echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
 
-    - name: Install SDK packages + accept licenses
+    - name: Accept licenses & install SDK packages
       run: |
         yes | sdkmanager --licenses
         sdkmanager \
