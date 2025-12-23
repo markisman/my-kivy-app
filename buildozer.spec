@@ -1,26 +1,25 @@
 [app]
-title = MyKivyApp
-package.name = mykivyapp
-package.domain = org.example
+title = CameraApp
+package.name = cameraapp
+package.domain = org.test
 
 source.dir = .
-source.include_exts = py,png,jpg,kv
+source.include_exts = py
 
 version = 0.1
 
-requirements = python3,kivy
+requirements = python3,kivy,opencv,numpy
 
 orientation = portrait
+fullscreen = 1
 
-fullscreen = 0
-
-android.permissions = INTERNET
-
+android.permissions = CAMERA
 android.api = 33
 android.minapi = 21
 android.ndk = 25b
 
-android.accept_sdk_license = True
+
+android.skip_update = True
 
 [buildozer]
 log_level = 2
