@@ -1,7 +1,7 @@
 [app]
-title = MyApp
-package.name = myapp
-package.domain = org.test
+title = MyKivyApp
+package.name = mykivyapp
+package.domain = org.example
 
 source.dir = .
 source.include_exts = py,png,jpg,kv
@@ -12,15 +12,16 @@ requirements = python3,kivy
 
 orientation = portrait
 
-fullscreen = 1
+fullscreen = 0
+
+android.permissions = INTERNET
 
 android.api = 33
 android.minapi = 21
-
-android.sdk = 33
 android.ndk = 25b
-android.skip_update = True
+
+android.accept_sdk_license = True
 
 [buildozer]
 log_level = 2
-warn_on_root = 0
+warn_on_root = 1
