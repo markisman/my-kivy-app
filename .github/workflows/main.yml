@@ -2,11 +2,11 @@ name: Build APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04   # ❗ 24.04 دردسر داره
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout
@@ -18,36 +18,32 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Install dependencies
+    - name: Install system deps
       run: |
         sudo apt update
         sudo apt install -y \
+          zip unzip git \
           python3 python3-pip \
-          zip unzip \
-          libncurses6 \
-          libstdc++6 \
-          libffi-dev \
-          libssl-dev \
-          openjdk-17-jdk
+          libstdc++6 libgcc-s1 \
+          libncurses6
 
     - name: Install Buildozer
       run: |
-        pip3 install --upgrade pip
-        pip3 install buildozer cython
+        pip3 install --user --upgrade buildozer cython virtualenv
 
     - name: Setup Android SDK
       run: |
-        mkdir -p $HOME/android-sdk/cmdline-tools
-        cd $HOME/android-sdk/cmdline-tools
+        export ANDROID_SDK_ROOT=$HOME/android-sdk
+        mkdir -p $ANDROID_SDK_ROOT
+        cd $ANDROID_SDK_ROOT
+
         wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
         unzip commandlinetools-linux-*.zip
-        mv cmdline-tools latest
+        mkdir -p cmdline-tools/latest
+        mv cmdline-tools/* cmdline-tools/latest/
 
-        echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
+        export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
 
-    - name: Accept licenses & install SDK packages
-      run: |
         yes | sdkmanager --licenses
         sdkmanager \
           "platform-tools" \
@@ -55,5 +51,9 @@ jobs:
           "build-tools;33.0.2"
 
     - name: Build APK
+      env:
+        ANDROIDSDK: $HOME/android-sdk
+        ANDROIDNDK: $HOME/.buildozer/android/platform/android-ndk-r25b
       run: |
+        export PATH=$PATH:$HOME/.local/bin
         buildozer android debug
